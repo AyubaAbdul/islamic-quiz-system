@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Islamic Quiz & Knowledge Assessment System</title>
+    <meta
+      name="description"
+      content="Islamic Quiz & Knowledge Assessment System for learning Qur'an, Hadith, Seerah, and Fiqh."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">☪</div>
+          <div>
+            <h1>Islamic Quiz</h1>
+            <p>Knowledge Assessment System</p>
+          </div>
+        </div>
+
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+          <button class="nav-btn" data-section="quizzes">Quizzes</button>
+          <button class="nav-btn" data-section="reviews">Reviews</button>
+          <button class="nav-btn" data-section="admin">Admin</button>
+        </nav>
+
+        <div class="user-panel">
+          <span id="welcomeText">Guest</span>
+          <button id="logoutBtn" class="btn btn-secondary hidden">Logout</button>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <section id="authSection" class="panel auth-panel">
+          <div class="auth-card">
+            <div class="auth-header">
+              <p class="eyebrow">Welcome</p>
+              <h2>Continue your Islamic learning journey</h2>
+              <p>Track progress, test knowledge, and deepen understanding.</p>
+            </div>
+
+            <div class="auth-tabs" role="tablist" aria-label="Authentication tabs">
+              <button class="tab-btn active" data-auth="login" role="tab" aria-selected="true">
+                Login
+              </button>
+              <button class="tab-btn" data-auth="register" role="tab" aria-selected="false">
+                Register
+              </button>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+              <label>
+                Email address
+                <input type="email" id="loginEmail" placeholder="name@example.com" required />
+              </label>
+              <label>
+                Password
+                <input type="password" id="loginPassword" placeholder="Enter your password" required />
+              </label>
+              <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <form id="registerForm" class="auth-form hidden">
+              <label>
+                Full name
+                <input type="text" id="registerName" placeholder="Your full name" required />
+              </label>
+              <label>
+                Email address
+                <input type="email" id="registerEmail" placeholder="name@example.com" required />
+              </label>
+              <label>
+                Password
+                <input type="password" id="registerPassword" placeholder="Create a password" required />
+              </label>
+              <button type="submit" class="btn btn-primary">Create account</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="dashboardSection" class="panel hidden">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h2>Learning Dashboard</h2>
+            </div>
+            <span class="pill">Progress overview</span>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span>Total quizzes</span>
+              <strong id="totalQuizzesStat">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Completed</span>
+              <strong id="completedStat">0</strong>
+            </article>
+            <article class="stat-card">
+              <span>Average score</span>
+              <strong id="averageScoreStat">0%</strong>
+            </article>
+            <article class="stat-card">
+              <span>Best category</span>
+              <strong id="bestCategoryStat">-</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="mini-panel">
+              <h3>Latest notifications</h3>
+              <ul id="notificationList" class="notification-list"></ul>
+            </div>
+
+            <div class="mini-panel">
+              <h3>Performance report</h3>
+              <div class="chart-list">
+                <div class="chart-row" data-category="Quran">
+                  <span>Quran</span>
+                  <div class="chart-track"><div class="chart-bar"></div></div>
+                </div>
+                <div class="chart-row" data-category="Hadith">
+                  <span>Hadith</span>
+                  <div class="chart-track"><div class="chart-bar"></div></div>
+                </div>
+                <div class="chart-row" data-category="Fiqh">
+                  <span>Fiqh</span>
+                  <div class="chart-track"><div class="chart-bar"></div></div>
+                </div>
+                <div class="chart-row" data-category="Seerah">
+                  <span>Seerah</span>
+                  <div class="chart-track"><div class="chart-bar"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="quizzesSection" class="panel hidden">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Explore</p>
+              <h2>Available quizzes</h2>
+            </div>
+            <button id="showAdminQuizBtn" class="btn btn-secondary hidden">Add quiz</button>
+          </div>
+
+          <div class="filters">
+            <select id="categoryFilter" aria-label="Filter by category">
+              <option value="All">All categories</option>
+              <option value="Quran">Quran</option>
+              <option value="Hadith">Hadith</option>
+              <option value="Seerah">Seerah</option>
+              <option value="Fiqh">Fiqh</option>
+            </select>
+
+            <select id="difficultyFilter" aria-label="Filter by difficulty">
+              <option value="All">All levels</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+
+            <input type="text" id="searchInput" placeholder="Search quiz title..." />
+          </div>
+
+          <div id="quizList" class="quiz-grid"></div>
+        </section>
+
+        <section id="quizPlaySection" class="panel hidden">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Assessment</p>
+              <h2 id="quizTitle">Quiz</h2>
+            </div>
+            <span id="quizMeta" class="pill">-</span>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="progressText">Question 1 / 1</span>
+          </div>
+
+          <div id="questionCard" class="question-card"></div>
+
+          <div class="quiz-actions">
+            <button id="prevBtn" class="btn btn-secondary">Previous</button>
+            <button id="nextBtn" class="btn btn-primary">Next</button>
+          </div>
+        </section>
+
+        <section id="reviewsSection" class="panel hidden">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Community</p>
+              <h2>Reviews & ratings</h2>
+            </div>
+          </div>
+
+          <div class="review-form">
+            <label>
+              Quiz
+              <select id="reviewQuizSelect"></select>
+            </label>
+            <label>
+              Rating
+              <select id="ratingInput">
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Very good</option>
+                <option value="3">3 - Good</option>
+                <option value="2">2 - Fair</option>
+                <option value="1">1 - Poor</option>
+              </select>
+            </label>
+            <label>
+              Feedback
+              <textarea id="reviewText" rows="4" placeholder="Share your experience with this quiz..."></textarea>
+            </label>
+            <button id="submitReviewBtn" class="btn btn-primary">Submit review</button>
+          </div>
+
+          <div id="reviewsList" class="review-list"></div>
+        </section>
+
+        <section id="adminSection" class="panel hidden">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Management</p>
+              <h2>Admin panel</h2>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <form id="adminQuizForm" class="admin-form">
+              <h3>Add new quiz</h3>
+
+              <label>
+                Quiz title
+                <input type="text" id="adminQuizTitle" required />
+              </label>
+
+              <div class="two-col">
+                <label>
+                  Category
+                  <select id="adminQuizCategory">
+                    <option value="Quran">Quran</option>
+                    <option value="Hadith">Hadith</option>
+                    <option value="Seerah">Seerah</option>
+                    <option value="Fiqh">Fiqh</option>
+                  </select>
+                </label>
+
+                <label>
+                  Difficulty
+                  <select id="adminQuizDifficulty">
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                Question
+                <input type="text" id="adminQuestionText" required />
+              </label>
+
+              <div class="two-col">
+                <label>
+                  Option A
+                  <input type="text" id="adminOptionA" required />
+                </label>
+                <label>
+                  Option B
+                  <input type="text" id="adminOptionB" required />
+                </label>
+              </div>
+
+              <div class="two-col">
+                <label>
+                  Option C
+                  <input type="text" id="adminOptionC" required />
+                </label>
+                <label>
+                  Option D
+                  <input type="text" id="adminOptionD" required />
+                </label>
+              </div>
+
+              <div class="two-col">
+                <label>
+                  Correct answer
+                  <select id="adminCorrectAnswer">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                  </select>
+                </label>
+
+                <label>
+                  Question type
+                  <select id="adminQuestionType">
+                    <option value="multiple">Multiple choice</option>
+                    <option value="truefalse">True / False</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                Explanation
+                <textarea id="adminExplanation" rows="3" required></textarea>
+              </label>
+
+              <button type="submit" class="btn btn-primary">Save quiz</button>
+            </form>
+
+            <div class="admin-list">
+              <h3>Quiz content queue</h3>
+              <ul id="adminQuizList"></ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
